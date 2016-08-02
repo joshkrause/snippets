@@ -1,0 +1,1 @@
+Just handy blocks of code to remember
