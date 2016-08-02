@@ -1,0 +1,5 @@
+First from user home directory:
+sudo chown -Rv username .composer
+
+Second from project directory containing "vendor" directory
+sudo chown -Rv joshuakrause vendor
