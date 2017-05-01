@@ -1,3 +1,5 @@
+<?php
+
 /*
 * Show the style that a tab is selected based on the url
 */
