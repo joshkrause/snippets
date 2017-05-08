@@ -130,17 +130,16 @@ trait ImageTrait {
         }
     }
 
-    /*
+       /*
     * Remove all images for this object
     *
     * objectname: the folder where the file should be saved, eg. 'posts', 'testimonials'
     * filename: the name of the image
-    * sizes: the array of all image sizes
     */
-    private function deleteAllImages($objectname, $filename, $sizes)
+    private function deleteAllImages($objectname, $filename)
     {
         $this->deleteImage($objectname, 'full', $filename);
-        foreach($sizes as $size)
+        foreach($this->sizes[$objectname] as $size)
         {
             $this->deleteImage($objectname, $size['name'], $filename);
         }
