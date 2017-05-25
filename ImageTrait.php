@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use File;
 use Image;
 
-// Version 2
+// Version 2.1
 trait ImageTrait {
 
 	//where the images are to be saved
@@ -17,24 +17,30 @@ trait ImageTrait {
 
     // speciify the copies images that need to be generated for each product, and their sizes
     private $sizes = [
-        'events' => [
-            array('name' => 'thumbnail', 'width' => 200, 'height' => 200),
-            array('name' => 'preview', 'width' => 600, 'height' => 600, 'constraint' => true),
-            array('name' => 'feature', 'width' => 1200, 'height' => 1200, 'constraint' => true),
+        'blog' => [
+            array('name' => 'thumbnail', 'width' => 200, 'height' => 150),
+            array('name' => 'preview', 'width' => 360, 'height' => 266),
+            array('name' => 'small', 'width' => 82, 'height' => 65),
+            array('name' => 'feature', 'width' => 845, 'height' => 447),
+
+            array('name' => 'facebook', 'width' => 1200, 'height' => 628),
+            array('name' => 'twitter', 'width' => 506, 'height' => 253),
+            array('name' => 'linkedin', 'width' => 350, 'height' => 183),
+            array('name' => 'g_plus', 'width' => 506, 'height' => 265 ),
         ],
-        'tours' => [
-            array('name' => 'thumbnail', 'width' => 200, 'height' => 200),
-            array('name' => 'preview', 'width' => 600, 'height' => 600, 'constraint' => true),
-            array('name' => 'feature', 'width' => 1200, 'height' => 1200, 'constraint' => true),
-        ],
+        'videos' => [
+            array('name' => 'thumbnail', 'width' => 170, 'height' => 130),
+            array('name' => 'preview', 'width' => 340, 'height' => 260, 'constraint' => true),
+            array('name' => 'feature', 'width' => 680, 'height' => 520, 'constraint' => true),
+        ]
     ];
     
 	 /**
     * Save all needed images from the original upload
     *
     * img: the image that was sent from the form request
-    * dirname: where the images will be saved
-    * sizes: an array where each element has a 'name', 'width', 'height', where 'name' will be the subdirectory name
+    * objectname: where the images will be saved eg. 'posts', 'testimonials' etc.
+    * prefix: a unique identifier to name the image, typically the id of the object
 
     example usage:
 
@@ -47,19 +53,19 @@ trait ImageTrait {
 
     * returns: the name of the file
     */
-    private function saveAllImages($img, $dirname, $prefix = NULL)
+    private function saveAllImages($img, $objectname, $prefix = NULL)
     {
         //save the original image
-        $filename = $this->saveImage($img, $dirname, 'full', $prefix);
+        $filename = $this->saveImage($img, $objectname, 'full', $prefix);
 
         // make copies in different sizes
-        foreach($this->sizes[$dirname] as $size)
+        foreach($this->sizes[$objectname] as $size)
         {
             if( isset($size['constraint']))
-                 $this->makeResizedImage($dirname, $size['name'], $filename, $size['width'], $size['height'], $size['constraint']);
+                 $this->makeResizedImage($objectname, $size['name'], $filename, $size['width'], $size['height'], $size['constraint']);
             else
             {
-                $this->makeResizedImage($dirname, $size['name'], $filename, $size['width'], $size['height']);
+                $this->makeResizedImage($objectname, $size['name'], $filename, $size['width'], $size['height']);
             }
         }
 
@@ -130,11 +136,11 @@ trait ImageTrait {
         }
     }
 
-       /*
+    /*
     * Remove all images for this object
     *
     * objectname: the folder where the file should be saved, eg. 'posts', 'testimonials'
-    * filename: the name of the image
+    * filename: the name of the image ( $object->image_name )
     */
     private function deleteAllImages($objectname, $filename)
     {
@@ -157,4 +163,5 @@ trait ImageTrait {
         $baseImagePath = base_path() . self::$imagePath;
         File::Delete($baseImagePath . "/{$objectname}/{$dirname}/{$filename}");
     }
+
 }
