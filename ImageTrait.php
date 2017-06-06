@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use File;
 use Image;
 
-// Version 2.1
+// Version 2.2 - Rotation
 trait ImageTrait {
 
 	//where the images are to be saved
@@ -17,30 +17,27 @@ trait ImageTrait {
 
     // speciify the copies images that need to be generated for each product, and their sizes
     private $sizes = [
-        'blog' => [
-            array('name' => 'thumbnail', 'width' => 200, 'height' => 150),
-            array('name' => 'preview', 'width' => 360, 'height' => 266),
-            array('name' => 'small', 'width' => 82, 'height' => 65),
-            array('name' => 'feature', 'width' => 845, 'height' => 447),
-
-            array('name' => 'facebook', 'width' => 1200, 'height' => 628),
-            array('name' => 'twitter', 'width' => 506, 'height' => 253),
-            array('name' => 'linkedin', 'width' => 350, 'height' => 183),
-            array('name' => 'g_plus', 'width' => 506, 'height' => 265 ),
+        'events' => [
+            array('name' => 'thumbnail', 'width' => 200, 'height' => 200, 'constraint' => false),
+            array('name' => 'preview', 'width' => 290, 'height' => 218, 'constraint' => false),
+            array('name' => 'feature', 'width' => 870, 'height' => 653, 'constraint' => false),
         ],
-        'videos' => [
-            array('name' => 'thumbnail', 'width' => 170, 'height' => 130),
-            array('name' => 'preview', 'width' => 340, 'height' => 260, 'constraint' => true),
-            array('name' => 'feature', 'width' => 680, 'height' => 520, 'constraint' => true),
-        ]
+        'tours' => [
+            array('name' => 'thumbnail', 'width' => 200, 'height' => 200, 'constraint' => false),
+            array('name' => 'preview', 'width' => 290, 'height' => 218, 'constraint' => false),
+            array('name' => 'feature', 'width' => 870, 'height' => 653, 'constraint' => false),
+        ],
+        'partners' => [
+            array('name' => 'thumbnail', 'width' => 200, 'height' => 200, 'constraint' => true),
+        ],
     ];
     
 	 /**
     * Save all needed images from the original upload
     *
     * img: the image that was sent from the form request
-    * objectname: where the images will be saved eg. 'posts', 'testimonials' etc.
-    * prefix: a unique identifier to name the image, typically the id of the object
+    * objectname: where the images will be saved, eg. 'posts', 'testimonials', etc.
+    * sizes: an array where each element has a 'name', 'width', 'height', where 'name' will be the subdirectory name
 
     example usage:
 
@@ -106,6 +103,58 @@ trait ImageTrait {
     }
 
     /*
+    * Find the full size image, rotate it. Then remove the other photos and 
+    * regenerate them from the newly rotated fullsize image.
+    *
+    * filename: the name of the image
+    * objectname: the folder where the file should be saved, eg. 'posts', 'testimonials'
+    * direction: string 'right' or 'left' 90 degree rotation that direction.
+    * 
+    * returns: new image name with a new time stamp
+    */
+    public function rotateAllImages($filename, $objectname, $direction)
+    {
+        // find the full image,
+        $full = Image::make(base_path().'/public/uploads/images/tours/full/'. $filename);
+
+        // remove old versions
+        $this->deleteAllImages($objectname, $filename);
+
+        // new date as file name
+
+        // date is 19 chars long, strip off date, then add new date
+        $old_name = substr($filename, 20);
+        $filename = date("Y-m-d-H-i-s_"). $old_name;
+
+        // rotate it 
+        if($direction == 'right')
+        {
+            $full->rotate(-90);
+        }
+        elseif($direction == 'left')
+        {
+            $full->rotate(90);
+        }
+
+        $full->save(base_path() . self::$imagePath . "/{$objectname}/full/".$filename);
+
+         // make copies in different sizes
+        foreach($this->sizes[$objectname] as $size)
+        {
+            if( isset($size['constraint']))
+                 $this->makeResizedImage($objectname, $size['name'], $filename, $size['width'], $size['height'], $size['constraint']);
+            else
+            {
+                $this->makeResizedImage($objectname, $size['name'], $filename, $size['width'], $size['height']);
+            }
+        }
+
+        return $filename;
+    }
+
+
+
+    /*
     * Make a resized version of the uploaded image, and save it in a different directory.
     * The original image should be saved under the /full directory.
     *
@@ -140,7 +189,8 @@ trait ImageTrait {
     * Remove all images for this object
     *
     * objectname: the folder where the file should be saved, eg. 'posts', 'testimonials'
-    * filename: the name of the image ( $object->image_name )
+    * filename: the name of the image
+    * sizes: the array of all image sizes
     */
     private function deleteAllImages($objectname, $filename)
     {
@@ -163,5 +213,4 @@ trait ImageTrait {
         $baseImagePath = base_path() . self::$imagePath;
         File::Delete($baseImagePath . "/{$objectname}/{$dirname}/{$filename}");
     }
-
 }
