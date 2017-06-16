@@ -55,7 +55,7 @@ function setCarbonOrNull($date)
  *
  * @param string  $date
  */
-function setIntegerOrNull($value)
+function setIntOrNull($value)
 {
     if(!empty($value))
     {
