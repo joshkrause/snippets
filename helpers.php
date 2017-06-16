@@ -32,3 +32,37 @@ function b2yn($bool)
 		return $bool;
 	}
 }
+
+/**
+ * Return a Carbon object if a date was entered, return null otherwise
+ *
+ * @param string  $date
+ */
+function setCarbonOrNull($date)
+{
+    if(!empty($date))
+    {
+        return new Carbon($date);
+    }
+    else
+    {
+        return null;
+    }
+}
+
+/**
+ * Return an integer if a date was entered, return null otherwise
+ *
+ * @param string  $date
+ */
+function setIntegerOrNull($value)
+{
+    if(!empty($value))
+    {
+        return $value;
+    }
+    else
+    {
+        return null;
+    }
+}
