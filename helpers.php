@@ -69,12 +69,13 @@ function setIntOrNull($value)
 
 /**
  * Return a Carbon object given the date and the time as strings
- *
+ * Takes the default formats from html inputs type "date" and "time"
+
  * @param string  $date
  * @param string  $time
  * @return Carbon\Carbon the date object
  */
 function makeDateTime($date,$time)
 {
-    return Carbon::createFromFormat('Y-m-d g:i A', $date.' '.$time);
+    return Carbon::createFromFormat('Y-m-d H:i', $date.' '.$time);
 }
