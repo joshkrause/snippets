@@ -66,3 +66,15 @@ function setIntOrNull($value)
         return null;
     }
 }
+
+/**
+ * Return a Carbon object given the date and the time as strings
+ *
+ * @param string  $date
+ * @param string  $time
+ * @return Carbon\Carbon the date object
+ */
+function makeDateTime($date,$time)
+{
+    return Carbon::createFromFormat('Y-m-d g:i A', $date.' '.$time);
+}
