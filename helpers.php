@@ -79,3 +79,81 @@ function makeDateTime($date,$time)
 {
     return Carbon::createFromFormat('Y-m-d H:i', $date.' '.$time);
 }
+
+/*
+* Make a simple label, red or green that says yes or no based on the boolean input
+*/
+function ynLabel($bool)
+{
+	if($bool == 0 || $bool == '0')
+	{
+		return '<span class="label label-danger">No</span>';
+	}
+	else if($bool == 1 || $bool == '1')
+	{
+		return '<span class="label label-success">Yes</span>';
+	}
+	else
+	{
+		return $bool;
+		return '<span class="label label-warning">'.$bool.'</span>';
+	}
+}
+
+
+/**
+* Cents integer to fomatted dollar
+* cents 2 dollars and cents
+* eg.  3525 -> $35.25
+*/
+function c2d($cents)
+{
+	return '$' . number_format($cents/100, 2);
+}
+
+/**
+* Dollars integer to cents integer
+* dollars 2 cents
+* eg.  35.25 -> 3525
+*/
+function d2c($dollars)
+{
+	return $dollars * 100;
+}
+
+/**
+* dollars integer to fomatted dollar
+* dollars 2 dollars and cents
+* eg.  35 -> $35.00
+*/
+function d2d($dollars)
+{
+	return '$' . number_format($dollars, 2);
+}
+
+/**
+ * Helper to avoid writing {{ $value1 == $value2 ? 'selected' : '' }}
+ *
+ **/
+function selected($value1, $value2, $value3 = null)
+{
+	if($value1 == $value2 || $value1 == $value3)
+	{
+		return 'selected';
+	}
+	return '';
+}
+
+/**
+ * Helper to avoid writing {{ $value1 == $value2 || $value1 == $value3 ? 'checked' : '' }}
+ * use checked($value1, $value2, $value3) instead
+ *
+ **/
+function checked($value1, $value2, $value3 = null)
+{
+	if($value1 == $value2 || $value1 == $value3)
+	{
+		return 'checked';
+	}
+	return '';
+}
