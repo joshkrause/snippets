@@ -1,0 +1,4 @@
+Make sure to change the site before pasting into deployment script
+
+curl -X POST "https://pusher.eastwest.se/api/v1/device/pFu6kCPOYvNDbFyx3frB/push?message=MHREB%20Site%20Deployed%20Successfully"
+curl -X POST "https://pusher.eastwest.se/api/v1/device/UzQJW6Dxv6UYYpkTNANc/push?message=MHREB%20Site%20Deployed%20Successfully"
